@@ -172,10 +172,11 @@ Fast ray-tracing is enabled by [NVIDIA OptiX](https://developer.nvidia.com/rtx/r
 ## Citing
 If you use our work or build on top of it, please use the following citation:
 ```bibtex
-@article{kulhanek2023tetranerf,
+@inproceedings{kulhanek2023tetranerf,
   title={{T}etra-{NeRF}: Representing Neural Radiance Fields Using Tetrahedra},
   author={Kulhanek, Jonas and Sattler, Torsten},
-  journal={arXiv preprint arXiv:2304.09987},
-  year={2023},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision},
+  pages={18458--18469},
+  year={2023}
 }
 ```
