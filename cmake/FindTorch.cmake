@@ -40,7 +40,11 @@ endif()
 
 if("$ENV{CUDAARCHS}" STREQUAL "")
   execute_process(
-    COMMAND "${PYTHON_EXECUTABLE}" -c "import torch; archs=sorted({a.split('_')[1] for a in torch.cuda.get_arch_list() if a.startswith('sm_')}); print(';'.join(archs), end='')"
+    COMMAND "${PYTHON_EXECUTABLE}" -c "import torch;
+if torch.cuda.is_available():
+  major, minor = torch.cuda.get_device_capability(0); print(f'{major}{minor}', end='')
+else:
+  archs=sorted({a.split('_')[1] for a in torch.cuda.get_arch_list() if a.startswith('sm_')}); print(archs[-1] if archs else '75', end='')"
     RESULT_VARIABLE STATUS
     OUTPUT_VARIABLE CMAKE_CUDA_ARCHITECTURES)
   if(STATUS AND NOT STATUS EQUAL 0)

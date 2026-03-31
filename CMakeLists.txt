@@ -119,7 +119,7 @@ set_target_properties(tetranerf_cpp_extension PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 if(MSVC)
-  target_compile_options(tetranerf_cpp_extension PRIVATE /bigobj)
+  target_compile_options(tetranerf_cpp_extension PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/bigobj>)
 else()
   target_link_options(tetranerf_cpp_extension PRIVATE -flto=auto)
 endif()
