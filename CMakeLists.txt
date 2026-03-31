@@ -119,7 +119,17 @@ set_target_properties(tetranerf_cpp_extension PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 if(MSVC)
-  target_compile_options(tetranerf_cpp_extension PRIVATE $<$<COMPILE_LANGUAGE:CXX>:/bigobj>)
+  foreach(flag_var CMAKE_CUDA_FLAGS CMAKE_CUDA_FLAGS_DEBUG CMAKE_CUDA_FLAGS_RELEASE CMAKE_CUDA_FLAGS_RELWITHDEBINFO CMAKE_CUDA_FLAGS_MINSIZEREL)
+    if(DEFINED ${flag_var})
+      string(REPLACE "/bigobj" "" ${flag_var} "${${flag_var}}")
+    endif()
+  endforeach()
+
+  set_source_files_properties(
+    src/tetrahedra_tracer.cpp
+    src/triangulation.cpp
+    src/py_binding.cpp
+    PROPERTIES COMPILE_OPTIONS "/bigobj")
 else()
   target_link_options(tetranerf_cpp_extension PRIVATE -flto=auto)
 endif()
