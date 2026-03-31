@@ -46,15 +46,19 @@ if(NOT BIN2C)
   message(FATAL_ERROR "Could not find bin2c. Install CUDA toolkit samples/tools and ensure bin2c is on PATH.")
 endif()
 
-set(PTX_ARCH_FLAGS "")
+set(_ptx_arch_candidates "")
 foreach(arch IN LISTS CMAKE_CUDA_ARCHITECTURES)
   if(arch MATCHES "^[0-9]+$")
-    list(APPEND PTX_ARCH_FLAGS "--generate-code=arch=compute_${arch},code=sm_${arch}")
+    list(APPEND _ptx_arch_candidates "${arch}")
   endif()
 endforeach()
-if(NOT PTX_ARCH_FLAGS)
-  list(APPEND PTX_ARCH_FLAGS "--generate-code=arch=compute_75,code=sm_75")
+if(_ptx_arch_candidates)
+  list(SORT _ptx_arch_candidates COMPARE NATURAL)
+  list(GET _ptx_arch_candidates -1 PTX_ARCH)
+else()
+  set(PTX_ARCH 75)
 endif()
+set(PTX_ARCH_FLAG "--gpu-architecture=compute_${PTX_ARCH}")
 
 function(compile_ptx_and_embed cuda_file output_var symbol_name)
   get_filename_component(cuda_name "${cuda_file}" NAME_WE)
@@ -69,7 +73,7 @@ function(compile_ptx_and_embed cuda_file output_var symbol_name)
       -o "${ptx_file}"
       -I"${CMAKE_CURRENT_SOURCE_DIR}/src"
       -I"${OptiX_INCLUDE}"
-      ${PTX_ARCH_FLAGS}
+      ${PTX_ARCH_FLAG}
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/${cuda_file}"
     COMMENT "Generating PTX from ${cuda_file}"
     VERBATIM)
