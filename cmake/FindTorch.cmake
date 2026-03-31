@@ -40,9 +40,12 @@ endif()
 
 if("$ENV{CUDAARCHS}" STREQUAL "")
   execute_process(
-    COMMAND "${PYTHON_EXECUTABLE}" -c "import torch.utils.cpp_extension;print(' '.join(sorted(set(x.split('_')[-1] for x in torch.utils.cpp_extension._get_cuda_arch_flags()))),end='')"
-    COMMAND_ERROR_IS_FATAL ANY
+    COMMAND "${PYTHON_EXECUTABLE}" -c "import torch; archs=sorted({a.split('_')[1] for a in torch.cuda.get_arch_list() if a.startswith('sm_')}); print(';'.join(archs), end='')"
+    RESULT_VARIABLE STATUS
     OUTPUT_VARIABLE CMAKE_CUDA_ARCHITECTURES)
+  if(STATUS AND NOT STATUS EQUAL 0)
+    set(CMAKE_CUDA_ARCHITECTURES "75")
+  endif()
 endif()
 
 message(STATUS "Using torch libraries: ${TORCH_LIBRARY_DIRS}")

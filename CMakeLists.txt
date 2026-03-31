@@ -1,19 +1,25 @@
 cmake_minimum_required(VERSION 3.22.1)
 project(fast_traversal LANGUAGES CXX CUDA)
 
+if(POLICY CMP0167)
+  cmake_policy(SET CMP0167 OLD)
+endif()
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
 
-find_package(Python3 COMPONENTS Interpreter REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
 set(PYTHON_EXECUTABLE "${Python3_EXECUTABLE}")
 
 find_package(Torch REQUIRED)
 find_package(CGAL REQUIRED)
 find_package(OptiX REQUIRED)
 find_package(CUDAToolkit REQUIRED)
+
+set(PYBIND11_FINDPYTHON ON)
 
 include(FetchContent)
 FetchContent_Declare(
